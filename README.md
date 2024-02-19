@@ -1,3 +1,15 @@
+**Port of raylib for the 3ds**
+
+With dkp installed, this can be built using the following command :
+```sh
+make PLATFORM=PLATFORM_3DS
+```
+
+Based on [picagl](https://github.com/masterfeizz/picaGL) by [masterfeizz](https://github.com/masterfeizz), and [his original port of raylib](https://github.com/masterfeizz/raylib/tree/3ds) to the 3ds was used as a reference.
+
+
+**original raylib readme :**
+
 <img align="left" style="width:260px" src="https://github.com/raysan5/raylib/blob/master/logo/raylib_logo_animation.gif" width="288px">
 
 **raylib is a simple and easy-to-use library to enjoy videogames programming.**
