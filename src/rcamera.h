@@ -454,6 +454,7 @@ void UpdateCamera(Camera *camera, int mode)
     }
     else
     {
+#if !defined(PLATFORM_3DS)
         // Camera rotation
         if (IsKeyDown(KEY_DOWN)) CameraPitch(camera, -CAMERA_ROTATION_SPEED, lockView, rotateAroundTarget, rotateUp);
         if (IsKeyDown(KEY_UP)) CameraPitch(camera, CAMERA_ROTATION_SPEED, lockView, rotateAroundTarget, rotateUp);
@@ -461,6 +462,7 @@ void UpdateCamera(Camera *camera, int mode)
         if (IsKeyDown(KEY_LEFT)) CameraYaw(camera, CAMERA_ROTATION_SPEED, rotateAroundTarget);
         if (IsKeyDown(KEY_Q)) CameraRoll(camera, -CAMERA_ROTATION_SPEED);
         if (IsKeyDown(KEY_E)) CameraRoll(camera, CAMERA_ROTATION_SPEED);
+#endif
 
         // Camera movement
         // Camera pan (for CAMERA_FREE)
@@ -479,11 +481,13 @@ void UpdateCamera(Camera *camera, int mode)
             CameraPitch(camera, -mousePositionDelta.y*CAMERA_MOUSE_MOVE_SENSITIVITY, lockView, rotateAroundTarget, rotateUp);
         }
 
+#if !defined(PLATFORM_3DS)
         // Keyboard support
         if (IsKeyDown(KEY_W)) CameraMoveForward(camera, CAMERA_MOVE_SPEED, moveInWorldPlane);
         if (IsKeyDown(KEY_A)) CameraMoveRight(camera, -CAMERA_MOVE_SPEED, moveInWorldPlane);
         if (IsKeyDown(KEY_S)) CameraMoveForward(camera, -CAMERA_MOVE_SPEED, moveInWorldPlane);
         if (IsKeyDown(KEY_D)) CameraMoveRight(camera, CAMERA_MOVE_SPEED, moveInWorldPlane);
+#endif
 
         // Gamepad movement
         if (IsGamepadAvailable(0))
@@ -500,17 +504,21 @@ void UpdateCamera(Camera *camera, int mode)
 
         if (mode == CAMERA_FREE)
         {
+#if !defined(PLATFORM_3DS)
             if (IsKeyDown(KEY_SPACE)) CameraMoveUp(camera, CAMERA_MOVE_SPEED);
             if (IsKeyDown(KEY_LEFT_CONTROL)) CameraMoveUp(camera, -CAMERA_MOVE_SPEED);
+#endif
         }
     }
 
     if ((mode == CAMERA_THIRD_PERSON) || (mode == CAMERA_ORBITAL) || (mode == CAMERA_FREE))
     {
+#if !defined(PLATFORM_3DS)
         // Zoom target distance
         CameraMoveToTarget(camera, -GetMouseWheelMove());
         if (IsKeyPressed(KEY_KP_SUBTRACT)) CameraMoveToTarget(camera, 2.0f);
         if (IsKeyPressed(KEY_KP_ADD)) CameraMoveToTarget(camera, -2.0f);
+#endif
     }
 }
 #endif // !RCAMERA_STANDALONE

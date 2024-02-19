@@ -567,6 +567,7 @@ typedef enum {
 // required keys for alternative layouts
 typedef enum {
     KEY_NULL            = 0,        // Key: NULL, used for no key pressed
+#if !defined(__3DS__)
     // Alphanumeric keys
     KEY_APOSTROPHE      = 39,       // Key: '
     KEY_COMMA           = 44,       // Key: ,
@@ -680,6 +681,7 @@ typedef enum {
     KEY_MENU            = 5,        // Key: Android menu button
     KEY_VOLUME_UP       = 24,       // Key: Android volume up button
     KEY_VOLUME_DOWN     = 25        // Key: Android volume down button
+#endif
 } KeyboardKey;
 
 // Add backwards compatibility support for deprecated names

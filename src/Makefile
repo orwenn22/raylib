@@ -85,7 +85,11 @@ RAYLIB_CONFIG_FLAGS  ?= NONE
 
 # Include raylib modules on compilation
 # NOTE: Some programs like tools could not require those modules
-RAYLIB_MODULE_AUDIO  ?= TRUE
+ifeq ($(PLATFORM), PLATFORM_3DS)
+    RAYLIB_MODULE_AUDIO  ?= FALSE
+else
+    RAYLIB_MODULE_AUDIO  ?= TRUE
+endif
 RAYLIB_MODULE_MODELS ?= TRUE
 RAYLIB_MODULE_RAYGUI ?= FALSE
 
@@ -241,6 +245,10 @@ ifeq ($(PLATFORM),PLATFORM_ANDROID)
     # By default use OpenGL ES 2.0 on Android
     GRAPHICS = GRAPHICS_API_OPENGL_ES2
 endif
+ifeq ($(PLATFORM),PLATFORM_3DS)
+    # On 3DS OpenGL 1.1 must be used
+    GRAPHICS = GRAPHICS_API_OPENGL_11
+endif
 
 # Define default C compiler and archiver to pack library: CC, AR
 #------------------------------------------------------------------------------------------------
@@ -287,6 +295,11 @@ ifeq ($(PLATFORM),PLATFORM_ANDROID)
     endif
     # It seems from Android NDK r22 onwards we need to use llvm-ar
     AR = $(ANDROID_TOOLCHAIN)/bin/llvm-ar
+endif
+ifeq ($(PLATFORM),PLATFORM_3DS)
+    # DevkitARM
+    CC = $(DEVKITARM)/bin/arm-none-eabi-gcc
+    AR = $(DEVKITARM)/bin/arm-none-eabi-ar
 endif
 
 # Define compiler flags: CFLAGS
@@ -384,6 +397,15 @@ ifeq ($(PLATFORM),PLATFORM_ANDROID)
     # Preprocessor macro definitions
     CFLAGS += -D__ANDROID__ -DPLATFORM_ANDROID -D__ANDROID_API__=$(ANDROID_API_VERSION)
 endif
+ifeq ($(PLATFORM),PLATFORM_3DS)
+    # Compiler flags for arquitecture
+    CFLAGS += -march=armv6k -mtune=mpcore -mfloat-abi=hard -mtp=soft
+    # Compilation functions attributes options
+    # CFLAGS += -mword-relocations -fomit-frame-pointer -ffunction-sections
+    CFLAGS += -mword-relocations -fomit-frame-pointer -ffunction-sections -fdata-sections
+    # Preprocessor macro definitions
+    CFLAGS += -D__3DS__    # -D_3DS
+endif
 
 # Define required compilation flags for raylib SHARED lib
 ifeq ($(RAYLIB_LIBTYPE),SHARED)
@@ -475,6 +497,10 @@ ifeq ($(PLATFORM),PLATFORM_ANDROID)
     ifeq ($(ANDROID_ARCH),x86_64)
         INCLUDE_PATHS += -I$(ANDROID_SYSROOT)/usr/include/x86_64-linux-android
     endif
+endif
+ifeq ($(PLATFORM),PLATFORM_3DS)
+    # 3DS required libraries
+    INCLUDE_PATHS += -I$(DEVKITPRO)/libctru/include -I$(DEVKITPRO)/picaGL/include
 endif
 
 # Define library paths containing required libs: LDFLAGS

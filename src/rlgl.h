@@ -973,7 +973,7 @@ RLAPI void rlLoadDrawQuad(void);     // Load and draw a quad
 //----------------------------------------------------------------------------------
 // Types and Structures Definition
 //----------------------------------------------------------------------------------
-#if defined(GRAPHICS_API_OPENGL_33) || defined(GRAPHICS_API_OPENGL_ES2)
+#if defined(GRAPHICS_API_OPENGL_33) || defined(GRAPHICS_API_OPENGL_ES2) || defined(__3DS__)
 typedef struct rlglData {
     rlRenderBatch *currentBatch;            // Current render batch
     rlRenderBatch defaultBatch;             // Default internal render batch
@@ -1054,7 +1054,7 @@ typedef void *(*rlglLoadProc)(const char *name);   // OpenGL extension functions
 //----------------------------------------------------------------------------------
 // Global Variables Definition
 //----------------------------------------------------------------------------------
-#if defined(GRAPHICS_API_OPENGL_33) || defined(GRAPHICS_API_OPENGL_ES2)
+#if defined(GRAPHICS_API_OPENGL_33) || defined(GRAPHICS_API_OPENGL_ES2) || defined(__3DS__)
 static rlglData RLGL = { 0 };
 #endif  // GRAPHICS_API_OPENGL_33 || GRAPHICS_API_OPENGL_ES2
 
@@ -1869,7 +1869,7 @@ void rlEnableWireMode(void)
 
 void rlEnablePointMode(void)
 {
-#if defined(GRAPHICS_API_OPENGL_11) || defined(GRAPHICS_API_OPENGL_33)
+#if (defined(GRAPHICS_API_OPENGL_11) || defined(GRAPHICS_API_OPENGL_33)) && !defined(__3DS__)
     // NOTE: glPolygonMode() not available on OpenGL ES
     glPolygonMode(GL_FRONT_AND_BACK, GL_POINT);
     glEnable(GL_PROGRAM_POINT_SIZE);
@@ -1890,6 +1890,9 @@ void rlSetLineWidth(float width) { glLineWidth(width); }
 // Get the line drawing width
 float rlGetLineWidth(void)
 {
+#if defined(__3DS__)
+    #define GL_LINE_WIDTH 0x0B21
+#endif
     float width = 0;
     glGetFloatv(GL_LINE_WIDTH, &width);
     return width;
@@ -1898,7 +1901,7 @@ float rlGetLineWidth(void)
 // Enable line aliasing
 void rlEnableSmoothLines(void)
 {
-#if defined(GRAPHICS_API_OPENGL_33) || defined(GRAPHICS_API_OPENGL_11)
+#if (defined(GRAPHICS_API_OPENGL_33) || defined(GRAPHICS_API_OPENGL_11)) && !defined(__3DS__)
     glEnable(GL_LINE_SMOOTH);
 #endif
 }
@@ -1906,7 +1909,7 @@ void rlEnableSmoothLines(void)
 // Disable line aliasing
 void rlDisableSmoothLines(void)
 {
-#if defined(GRAPHICS_API_OPENGL_33) || defined(GRAPHICS_API_OPENGL_11)
+#if (defined(GRAPHICS_API_OPENGL_33) || defined(GRAPHICS_API_OPENGL_11)) && !defined(__3DS__)
     glDisable(GL_LINE_SMOOTH);
 #endif
 }

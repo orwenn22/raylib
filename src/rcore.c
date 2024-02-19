@@ -499,6 +499,8 @@ const char *TextFormat(const char *text, ...);              // Formatting of tex
     #include "platforms/rcore_drm.c"
 #elif defined(PLATFORM_ANDROID)
     #include "platforms/rcore_android.c"
+#elif defined(PLATFORM_3DS)
+    #include "platforms/rcore_3ds.c"
 #else
     // TODO: Include your custom platform backend!
     // i.e software rendering backend or console backend!
@@ -567,6 +569,8 @@ void InitWindow(int width, int height, const char *title)
     TRACELOG(LOG_INFO, "Platform backend: NATIVE DRM");
 #elif defined(PLATFORM_ANDROID)
     TRACELOG(LOG_INFO, "Platform backend: ANDROID");
+#elif defined(PLATFORM_3DS)
+    TRACELOG(LOG_INFO, "Platform backend: 3DS");
 #else
     // TODO: Include your custom platform backend!
     // i.e software rendering backend or console backend!
@@ -611,7 +615,11 @@ void InitWindow(int width, int height, const char *title)
 
     // Initialize global input state
     memset(&CORE.Input, 0, sizeof(CORE.Input));     // Reset CORE.Input structure to 0
+#if defined(__3DS__)
+    CORE.Input.Keyboard.exitKey = 69;   //lol
+#else
     CORE.Input.Keyboard.exitKey = KEY_ESCAPE;
+#endif
     CORE.Input.Mouse.scale = (Vector2){ 1.0f, 1.0f };
     CORE.Input.Mouse.cursor = MOUSE_CURSOR_ARROW;
     CORE.Input.Gamepad.lastButtonPressed = GAMEPAD_BUTTON_UNKNOWN;
@@ -3073,6 +3081,10 @@ void InitTimer(void)
         CORE.Time.base = (unsigned long long int)now.tv_sec*1000000000LLU + (unsigned long long int)now.tv_nsec;
     }
     else TRACELOG(LOG_WARNING, "TIMER: Hi-resolution timer not available");
+#endif
+
+#if defined(__3DS__)
+    CORE.Time.base = svcGetSystemTick();
 #endif
 
     CORE.Time.previous = GetTime();     // Get time as double
