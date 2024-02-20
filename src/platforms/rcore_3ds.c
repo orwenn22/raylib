@@ -85,7 +85,25 @@ void SetWindowPosition(int x, int y)
 // Set monitor for the current window
 void SetWindowMonitor(int monitor)
 {
-    pglSelectScreen(monitor != 0, 0);
+    const int screen_sizes[2][2] = {
+        {400, 240},     // 0 => top
+        {320, 240},     // 1 => bottom
+    };
+
+    if(monitor < 0 || monitor >= 2) return;
+    const int width = screen_sizes[monitor][0];
+    const int height = screen_sizes[monitor][1];
+    CORE.Window.display.width = width;
+    CORE.Window.display.height = height;
+    CORE.Window.render.width = width;
+    CORE.Window.render.height = height;
+    CORE.Window.screen.width = width;
+    CORE.Window.screen.height = height;
+    CORE.Window.currentFbo.width = width;
+    CORE.Window.currentFbo.height = height;
+    pglSelectScreen(monitor, 0);        //0 is GFX left
+    SetupFramebuffer(width, height);
+    SetupViewport(width, height);
 }
 
 // Set window minimum dimensions (FLAG_WINDOW_RESIZABLE)
@@ -149,7 +167,8 @@ Vector2 GetMonitorPosition(int monitor)
 int GetMonitorWidth(int monitor)
 {
     (void) monitor;
-    return 400;     //3ds top screen width
+    //return 400;     //3ds top screen width
+    return CORE.Window.display.width;
 }
 
 // Get selected monitor height (currently used by monitor)
@@ -363,9 +382,12 @@ void PollInputEvents(void)
 
 int InitPlatform(void)
 {
+    //Initialize rom filesystem
+    romfsMountSelf("romfs");
+
     //Initialize the LCD framebuffer
     gfxInitDefault();
-    consoleInit(GFX_BOTTOM, NULL);
+    //consoleInit(GFX_BOTTOM, NULL);
     //Initialize picaGL
     pglInit();
 
@@ -373,26 +395,7 @@ int InitPlatform(void)
 
     CORE.Window.ready = true;
 
-    //TOP screen   TODO : support multiple screen ?
-    CORE.Window.display.width  = 400;
-    CORE.Window.display.height = 240;
-
-    // Overwrite the values passed in InitWindow
-    CORE.Window.screen.width  = 400;
-    CORE.Window.screen.height = 240;
-
-    CORE.Window.render.width = CORE.Window.screen.width;
-    CORE.Window.render.height = CORE.Window.screen.height;
-    CORE.Window.currentFbo.width = CORE.Window.render.width;
-    CORE.Window.currentFbo.height = CORE.Window.render.height;
-
-    // Screen size security check
-    if (CORE.Window.screen.width <= 0) CORE.Window.screen.width = CORE.Window.display.width;
-    if (CORE.Window.screen.height <= 0) CORE.Window.screen.height = CORE.Window.display.height;
-
-    // At this point we need to manage render size vs screen size
-    // NOTE: This function use and modify global module variables: CORE.Window.screen.width/CORE.Window.screen.height and CORE.Window.render.width/CORE.Window.render.height and CORE.Window.screenScale
-    SetupFramebuffer(CORE.Window.display.width, CORE.Window.display.height);
+    SetWindowMonitor(0);    // 0 = top screen
 }
 
 // Close platform
@@ -400,6 +403,7 @@ void ClosePlatform(void)
 {
     pglExit();
     gfxExit();
+    romfsUnmount("romfs");
     //romfsExit();
 }
 

@@ -1199,6 +1199,13 @@ RLAPI int GetTouchPointId(int index);                         // Get touch point
 RLAPI int GetTouchPointCount(void);                           // Get number of touch points
 
 //------------------------------------------------------------------------------------
+// 3DS Functions (Module: rcore)
+//------------------------------------------------------------------------------------
+
+RLAPI void BeginDrawing3DS(int screen, int side);
+RLAPI void Set3DSScreen(int screen, int side);
+
+//------------------------------------------------------------------------------------
 // Gestures and Touch Handling Functions (Module: rgestures)
 //------------------------------------------------------------------------------------
 RLAPI void SetGesturesEnabled(unsigned int flags);      // Enable a set of gestures using flags

@@ -3608,3 +3608,18 @@ const char *TextFormat(const char *text, ...)
 }
 
 #endif // !SUPPORT_MODULE_RTEXT
+
+#if defined(PLATFORM_3DS)
+void BeginDrawing3DS(int screen, int side) {
+    SetWindowMonitor(screen);
+    pglSelectScreen(screen, side);  //SetWindowMonitor will select the left by default, so we need to make another call to select the correct side
+    BeginDrawing();
+}
+
+void Set3DSScreen(int screen, int side) {
+    rlDrawRenderBatchActive();          //Draw everything from the batch
+    SwapScreenBuffer();                 //Update current screen
+    SetWindowMonitor(screen);           //Change screen  (will select the left side by default)
+    pglSelectScreen(screen, side);      //Set correct side
+}
+#endif
